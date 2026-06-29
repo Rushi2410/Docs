@@ -1,0 +1,155 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f2ea;
+  --foreground: #171411;
+  --muted: #6f6a62;
+  --panel: rgba(255, 253, 248, 0.82);
+  --panel-strong: #fffdf8;
+  --line: rgba(23, 20, 17, 0.09);
+  --accent: #1f6b5b;
+  --accent-strong: #174f44;
+  --accent-soft: rgba(31, 107, 91, 0.1);
+  --danger: #b91c1c;
+  --font-sans: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(31, 107, 91, 0.08), transparent 24%),
+    radial-gradient(circle at 85% 8%, rgba(197, 162, 92, 0.1), transparent 18%),
+    linear-gradient(180deg, #f6f2ea 0%, #f0eadf 100%);
+}
+
+body {
+  min-height: 100vh;
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-display), sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+button:not(:disabled),
+select:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
+::selection {
+  background: rgba(31, 107, 91, 0.16);
+}
+
+.noise {
+  position: relative;
+}
+
+.noise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.05) 0.7px, transparent 0.7px);
+  background-size: 14px 14px;
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(18px);
+}
+
+.panel-strong {
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.56);
+  border-radius: 9999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.7rem;
+  line-height: 1rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.rise-in {
+  animation: rise-in 0.65s ease-out both;
+}
+
+.rise-in-delay {
+  animation: rise-in 0.85s ease-out both;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ProseMirror {
+  min-height: 34rem;
+  outline: none;
+  color: #161513;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #9ca3af;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+  color: #171411;
+  font-weight: 600;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 1.5rem;
+}
+
+.ProseMirror blockquote {
+  border-left: 4px solid rgba(31, 107, 91, 0.3);
+  color: #4b5563;
+  padding-left: 1rem;
+}
+
+.ProseMirror code {
+  border-radius: 0.5rem;
+  background: #ece6dc;
+  padding: 0.15rem 0.35rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.9em;
+}

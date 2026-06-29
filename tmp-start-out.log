@@ -1,0 +1,4 @@
+
+> docs@0.1.0 start
+> cross-env NODE_ENV=production node server.js
+

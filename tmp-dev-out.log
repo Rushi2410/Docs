@@ -1,0 +1,17 @@
+
+> docs@0.1.0 predev
+> prisma generate
+
+Prisma schema loaded from prisma\schema.prisma
+
+✔ Generated Prisma Client (v6.19.0) to .\node_modules\@prisma\client in 137ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+
+> docs@0.1.0 dev
+> node server.js
+
+> Ready on http://0.0.0.0:3000

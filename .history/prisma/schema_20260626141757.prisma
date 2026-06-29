@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  documents Document[] @relation("OwnerDocuments")
+  members   DocumentMember[]
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @default("")
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner        User               @relation("OwnerDocuments", fields: [ownerId], references: [id], onDelete: Cascade)
+  members      DocumentMember[]
+  versions     DocumentVersion[]
+  syncEvents   SyncEvent[]
+}
+
+model DocumentMember {
+  id         String @id @default(cuid())
+  documentId String
+  userId     String
+  role       String @default("editor")
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+}
+
+model DocumentVersion {
+  id         String   @id @default(cuid())
+  documentId String
+  content    String
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}
+
+model SyncEvent {
+  id         String   @id @default(cuid())
+  documentId String
+  action     String
+  payload    String
+  createdAt  DateTime @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+}

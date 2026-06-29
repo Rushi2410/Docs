@@ -1,0 +1,94 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DocumentRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model User {
+  id           String           @id @default(cuid())
+  name         String
+  email        String           @unique
+  passwordHash String
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  ownedDocuments Document[]       @relation("OwnedDocuments")
+  memberships    DocumentMember[]
+  versions       DocumentVersion[] @relation("VersionCreator")
+  syncEvents     SyncEvent[]       @relation("SyncActor")
+}
+
+model Document {
+  id               String            @id @default(cuid())
+  title            String
+  ownerId          String
+  state            Bytes?
+  revision         Int               @default(1)
+  textContent      String            @default("")
+  htmlContent      String            @default("")
+  lastSyncedAt     DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  owner            User              @relation("OwnedDocuments", fields: [ownerId], references: [id], onDelete: Cascade)
+  members          DocumentMember[]
+  versions         DocumentVersion[]
+  syncEvents       SyncEvent[]
+}
+
+model DocumentMember {
+  id         String       @id @default(cuid())
+  documentId String
+  userId     String
+  role       DocumentRole
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  document   Document     @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+  @@index([userId])
+}
+
+model DocumentVersion {
+  id          String    @id @default(cuid())
+  documentId  String
+  createdById String
+  name        String
+  snapshot    Bytes
+  textContent String    @default("")
+  createdAt   DateTime  @default(now())
+
+  document    Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy   User      @relation("VersionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+model SyncEvent {
+  id             String    @id @default(cuid())
+  documentId     String
+  createdById    String
+  update         Bytes
+  clientUpdateId String
+  stateVector    Bytes?
+  textContent    String    @default("")
+  createdAt      DateTime  @default(now())
+
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  createdBy      User      @relation("SyncActor", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, clientUpdateId])
+  @@index([documentId, createdAt])
+}
